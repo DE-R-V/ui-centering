@@ -771,6 +771,7 @@ MonoBehaviour:
   objectThatFollows: {fileID: 499928842}
   toggleButton: {fileID: 455619726}
   zOffset: 0.7
+  smoothness: 0.01
 --- !u!1 &832575517
 GameObject:
   m_ObjectHideFlags: 0

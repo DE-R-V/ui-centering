@@ -18,9 +18,16 @@ public class UITrackingScript : MonoBehaviour
     private Button toggleButton;
     private bool isTrackingEnabled = true;
 
+    [Header("Tracking Settings")]
     [SerializeField]
     [Tooltip("Z axis offset from the camera position. Use negative values to move closer to the camera.\n Suggested values:\n - Between 0.45 and 0.55 is suggested for poke interactions\n - At least 0.7 is suggested for ray interactions")]
     private float zOffset;
+
+    [SerializeField]
+    [Range(0.01f, 10f)]
+    private float smoothness = 0.1f;
+    private Vector3 velocity = Vector3.zero;
+
 
 
     void Awake()
@@ -53,9 +60,10 @@ public class UITrackingScript : MonoBehaviour
     {
         if (toggleButton != null)
         {
-            UnityEngine.Vector3 cameraPositionToTrack = camera.transform.position;
-            cameraPositionToTrack.z += zOffset;
-            objectThatFollows.transform.position = cameraPositionToTrack;
+            Vector3 targetPosition = camera.transform.TransformPoint(new Vector3(0, 0, zOffset));
+            objectThatFollows.transform.position = Vector3.SmoothDamp(objectThatFollows.transform.position, targetPosition, ref velocity, smoothness);
+            var lookAtPos = new Vector3(camera.transform.position.x, transform.position.y, camera.transform.position.z);
+            objectThatFollows.transform.LookAt(lookAtPos);    
         }
     }
 
