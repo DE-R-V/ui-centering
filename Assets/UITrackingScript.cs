@@ -22,6 +22,7 @@ public class UITrackingScript : MonoBehaviour
     [SerializeField]
     [Tooltip("Z axis offset from the camera position. Use negative values to move closer to the camera.\n Suggested values:\n - Between 0.45 and 0.55 is suggested for poke interactions\n - At least 0.7 is suggested for ray interactions")]
     private float zOffset;
+    private float yOffset;
 
     [SerializeField]
     [Range(0.01f, 10f)]
@@ -60,10 +61,12 @@ public class UITrackingScript : MonoBehaviour
     {
         if (toggleButton != null)
         {
-            Vector3 targetPosition = camera.transform.TransformPoint(new Vector3(0, 0, zOffset));
+            Vector3 targetPosition = camera.transform.TransformPoint(new Vector3(0, yOffset, zOffset));
             objectThatFollows.transform.position = Vector3.SmoothDamp(objectThatFollows.transform.position, targetPosition, ref velocity, smoothness);
-            var lookAtPos = new Vector3(camera.transform.position.x, transform.position.y, camera.transform.position.z);
-            objectThatFollows.transform.LookAt(lookAtPos);    
+            Vector3 directionToCamera = camera.transform.position - objectThatFollows.transform.position;
+            Quaternion targetRotation = Quaternion.LookRotation(directionToCamera);
+            var adjustedDirection = Quaternion.Euler(-targetRotation.eulerAngles.x, targetRotation.eulerAngles.y - 180, targetRotation.eulerAngles.z);
+            objectThatFollows.transform.rotation = adjustedDirection;
         }
     }
 
