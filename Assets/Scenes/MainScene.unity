@@ -770,7 +770,8 @@ MonoBehaviour:
   camera: {fileID: 1665723894}
   objectThatFollows: {fileID: 499928842}
   toggleButton: {fileID: 455619726}
-  zOffset: 0.7
+  zOffset: 0.8
+  yOffset: -0.1
   smoothness: 0.01
 --- !u!1 &832575517
 GameObject:

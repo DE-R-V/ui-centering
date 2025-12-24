@@ -22,6 +22,7 @@ public class UITrackingScript : MonoBehaviour
     [SerializeField]
     [Tooltip("Z axis offset from the camera position. Use negative values to move closer to the camera.\n Suggested values:\n - Between 0.45 and 0.55 is suggested for poke interactions\n - At least 0.7 is suggested for ray interactions")]
     private float zOffset;
+    [SerializeField]
     private float yOffset;
 
     [SerializeField]
