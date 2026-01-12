@@ -1,6 +1,9 @@
 using System;
+using System.Text.RegularExpressions;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.XR.ARSubsystems;
+using UnityEngine.XR.Interaction.Toolkit.Interactables;
 
 public class UITrackingScript : MonoBehaviour
 {
@@ -18,6 +21,10 @@ public class UITrackingScript : MonoBehaviour
     private Button toggleButton;
     private bool isTrackingEnabled = true;
 
+    [SerializeField]
+    [Tooltip("This UI needs a collider to work properly")]
+    private BoxCollider uiCollider;
+
     [Header("Tracking Settings")]
     [SerializeField]
     [Tooltip("Z axis offset from the camera position. Use negative values to move closer to the camera.\n Suggested values:\n - Between 0.45 and 0.55 is suggested for poke interactions\n - At least 0.7 is suggested for ray interactions")]
@@ -30,14 +37,24 @@ public class UITrackingScript : MonoBehaviour
     private float smoothness = 0.1f;
     private Vector3 velocity = Vector3.zero;
 
-
-
     void Awake()
     {
         objectThatFollows = this.gameObject;
         if (toggleButton != null)
         {
             toggleButton.onClick.AddListener(ToggleTracking);
+        }
+        if (uiCollider == null)
+        {
+            BoxCollider collider = gameObject.AddComponent<BoxCollider>();
+            MatchColliderToRectTransform(
+                gameObject.GetComponent<RectTransform>(),
+                collider
+            );
+            collider.isTrigger = true;
+            uiCollider = collider;
+            XRSimpleInteractable xrInteractable = this.gameObject.GetComponent<XRSimpleInteractable>();
+            xrInteractable.colliders.Add(uiCollider);
         }
     }
 
@@ -57,6 +74,21 @@ public class UITrackingScript : MonoBehaviour
             TrackCamera();
         }
     }
+
+    void MatchColliderToRectTransform(RectTransform rect, BoxCollider box)
+    {
+        if (!rect || !box) return;
+
+        Rect r = rect.rect;
+
+        box.size = new Vector3(r.width, r.height, 0.01f);
+        box.center = new Vector3(
+            r.center.x,
+            r.center.y,
+            0f
+        );
+    }
+
 
     void TrackCamera()
     {
